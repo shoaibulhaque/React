@@ -7,7 +7,7 @@ function App() {
   const showEmployees = true;
   // let role = 'dev' 
   return (
-    <div className="App bg-red-300">
+    <div className="App">
       {showEmployees ? (
       <>
         <input type='text' onChange={
