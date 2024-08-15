@@ -39,10 +39,16 @@ function App() {
   ]);
 
   function updateEmployee(id, newName, newRole) {
-    const updatedEmployees = employees.map((employee) =>
-      employee.id === id
-        ? { ...employee, name: newName, role: newRole }
-        : employee
+    const updatedEmployees = employees.map(
+      (employee) =>
+        employee.id === id
+          ? { ...employee, name: newName, role: newRole }
+          : employee
+      // Or you can do using if else
+      // if (employee.id === id) {
+      //   return { ...employee, name: newName, role: newRole };
+      // }
+      // return employee;
     );
     setEmployees(updatedEmployees);
   }
@@ -56,7 +62,6 @@ function App() {
           <input
             type="text"
             onChange={(e) => {
-              console.log(e.target.value);
               setRole(e.target.value);
               // role = e.target.value; // this does not work !
             }}

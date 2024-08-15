@@ -33,9 +33,8 @@ function EditEmployee(props) {
           {/* Used the pre build tailwind inline form */}
           <form
             onSubmit={(e) => {
+              handleClose();
               e.preventDefault();
-              console.log("Hello from EditEmployee");
-              console.log(props.id, name, role);
               props.updateEmployee(props.id, name, role);
             }}
             id="editmodal"
