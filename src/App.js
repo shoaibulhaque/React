@@ -48,6 +48,8 @@ function App() {
             }}
           />
           <div className="flex flex-wrap justify-center">
+            {/* Map is a function on an array that allow us to go through each element
+            and execute a function for each one */}
             {employees.map((employee) => {
               return (
                 <Employee
