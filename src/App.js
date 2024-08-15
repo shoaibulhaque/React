@@ -2,6 +2,7 @@ import "./index.css";
 import Employee from "./components/Employee";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import AddEmployee from "./components/AddEmployee";
 
 function App() {
   const [role, setRole] = useState("dev"); // we cannot change value directly, so we have used state
@@ -38,6 +39,7 @@ function App() {
     },
   ]);
 
+  // Function to update an employee
   function updateEmployee(id, newName, newRole) {
     const updatedEmployees = employees.map(
       (employee) =>
@@ -51,6 +53,17 @@ function App() {
       // return employee;
     );
     setEmployees(updatedEmployees);
+  }
+
+  // Function to add an employee
+  function newEmployee(name, role, img) {
+    const newEmployee = {
+      id: uuidv4(),
+      name: name,
+      role: role,
+      img: img,
+    };
+    setEmployees([...employees, newEmployee]);
   }
 
   const showEmployees = true;
@@ -82,6 +95,7 @@ function App() {
               );
             })}
           </div>
+          <AddEmployee newEmployee={newEmployee} />
         </>
       ) : (
         <p> You can not see the Employees</p>
