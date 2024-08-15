@@ -7,31 +7,45 @@ function App() {
   const [role, setRole] = useState("dev"); // we cannot change value directly, so we have used state
   const [employees, setEmployees] = useState([
     {
+      id: 1,
       name: "Shoaib",
       role: "Developer",
       img: "https://images.pexels.com/photos/974266/pexels-photo-974266.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     },
     {
+      id: 2,
       name: "Saqib",
       role: "Intern",
       img: "https://images.pexels.com/photos/974266/pexels-photo-974266.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     },
     {
+      id: 3,
       name: "Faiz",
       role: "Developer",
       img: "https://images.pexels.com/photos/974266/pexels-photo-974266.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     },
     {
+      id: 4,
       name: "Abdullah",
       role: "Scientist",
       img: "https://images.pexels.com/photos/974266/pexels-photo-974266.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     },
     {
+      id: 5,
       name: "Haris",
       role: "Engineer",
       img: "https://images.pexels.com/photos/974266/pexels-photo-974266.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     },
   ]);
+
+  function updateEmployee(id, newName, newRole) {
+    const updatedEmployees = employees.map((employee) =>
+      employee.id === id
+        ? { ...employee, name: newName, role: newRole }
+        : employee
+    );
+    setEmployees(updatedEmployees);
+  }
 
   const showEmployees = true;
   // let role = 'dev'
@@ -54,9 +68,11 @@ function App() {
               return (
                 <Employee
                   key={uuidv4()}
+                  id={employee.id}
                   name={employee.name}
                   role={employee.role}
                   img={employee.img}
+                  updateEmployee={updateEmployee}
                 />
               );
             })}
