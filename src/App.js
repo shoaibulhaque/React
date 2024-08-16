@@ -3,6 +3,7 @@ import Employee from "./components/Employee";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import AddEmployee from "./components/AddEmployee";
+import EditEmployee from "./components/EditEmployee";
 
 function App() {
   const [role, setRole] = useState("dev"); // we cannot change value directly, so we have used state
@@ -83,6 +84,17 @@ function App() {
             {/* Map is a function on an array that allow us to go through each element
             and execute a function for each one */}
             {employees.map((employee) => {
+              // we are passing edit employee component so that we dont get confused
+              // when working with many nested layers
+              const editEmployee = (
+                <EditEmployee
+                  id={employee.id}
+                  name={employee.name}
+                  role={employee.role}
+                  updateEmployee={updateEmployee}
+                />
+              );
+
               return (
                 <Employee
                   key={uuidv4()}
@@ -90,7 +102,8 @@ function App() {
                   name={employee.name}
                   role={employee.role}
                   img={employee.img}
-                  updateEmployee={updateEmployee}
+                  // updateEmployee={updateEmployee} old approach
+                  editEmployee={editEmployee}
                 />
               );
             })}
