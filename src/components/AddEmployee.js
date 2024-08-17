@@ -116,7 +116,7 @@ function AddEmployee(props) {
             Close
           </Button>
           <button
-            className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-[0.45rem] px-4 rounded"
+            className="bg-gray-800 hover:bg-gray-700 text-white font-bold py-[0.45rem] px-4 rounded"
             form="editmodal"
             onClick={handleClose}
           >

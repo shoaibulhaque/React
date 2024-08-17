@@ -6,13 +6,19 @@ import AddEmployee from "./components/AddEmployee";
 import EditEmployee from "./components/EditEmployee";
 import Header from "./components/Header";
 import Employees from "./pages/Employees";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
   return (
     <Header>
       {/* As now we have header surrounding different components we dont have to p
     put in each and every component */}
-      <Employees />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/employees" element={<Employees />} />
+        </Routes>
+      </BrowserRouter>
+      {/* <Employees /> */}
     </Header>
   );
 }
