@@ -71,7 +71,7 @@ function Employees() {
   const showEmployees = true;
   // let role = 'dev'
   return (
-    <div className="App bg-gray-160 min-h-screen">
+    <div className="">
       {showEmployees ? (
         <>
           <div className="flex flex-wrap justify-center my-2">
