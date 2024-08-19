@@ -6,6 +6,7 @@ import NotFound from "../components/NotFound";
 export default function Definition() {
   const [word, setWord] = useState(undefined);
   const [notFound, setNotFound] = useState(false);
+  const [error, setError] = useState(false);
   let { search } = useParams();
   const show = "visible";
   const navigate = useNavigate();
@@ -16,13 +17,24 @@ export default function Definition() {
         if (response.status === 404) {
           setNotFound(true);
         }
+
+        if (!response.ok) {
+          setError(true);
+
+          throw new Error("Something went wrong !");
+        }
         return response.json();
       })
       .then((data) => {
         setWord(data[0].meanings);
+        console.log(data[0].meanings);
+      })
+      .catch((e) => {
+        console.log(e.message);
       });
   }, []);
 
+  // Handling 404 error
   if (notFound === true) {
     return (
       <>
