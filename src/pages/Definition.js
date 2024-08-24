@@ -8,7 +8,7 @@ export default function Definition() {
   const [notFound, setNotFound] = useState(false);
   const [error, setError] = useState(false);
   let { search } = useParams();
-  const show = "visible";
+  const show = "true";
   const navigate = useNavigate();
   // const [word1, setWord1] = useState("");
   // const [word2, setWord2] = useState("");

@@ -9,12 +9,19 @@ export default function NotFound(Props) {
             404
           </h1>
           <p className="mt-3 text-gray-600">Oops, something went wrong.</p>
-          <p className="text-gray-600 ">Sorry, we couldn't find your page.</p>
+          {Props.id ? (
+            <p className="text-gray-600 ">
+              Sorry, customer with ID {Props.id} does not exist.
+            </p>
+          ) : (
+            <p className="text-gray-600 ">Sorry, we couldn't find your page.</p>
+          )}
           <div className="mt-5 flex flex-col justify-center items-center gap-2 sm:flex-row sm:gap-3">
             <Link
               className={
-                "no-underline bg-gray-800 hover:bg-gray-700 text-white font-bold py-[0.45rem] px-4 rounded " +
-                Props.show
+                Props.show === "true"
+                  ? "no-underline bg-gray-800 hover:bg-gray-700 text-white font-bold py-[0.45rem] px-4 rounded visible"
+                  : "no-underline bg-gray-800 hover:bg-gray-700 text-white font-bold py-[0.45rem] px-4 rounded visually-hidden"
               }
               to={Props.linkTo}
             >

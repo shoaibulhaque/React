@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { baseURL } from "../shared";
 
 export default function Customers() {
   const [customers, setCustomers] = useState();
 
   useEffect(() => {
     console.log("Fetching...");
-    fetch("http://localhost:8000/api/customers/")
+    fetch(baseURL + "api/customers/") // consuming data from the backend
       .then((response) => {
         return response.json();
       })
@@ -20,7 +22,11 @@ export default function Customers() {
       <h1>Here are our Customers! </h1>
       {customers
         ? customers.map((customer) => {
-            return <p>{customer.name}</p>;
+            return (
+              <p>
+                <Link to={"/customers/" + customer.id}>{customer.name}</Link>
+              </p>
+            );
           })
         : null}
     </>
