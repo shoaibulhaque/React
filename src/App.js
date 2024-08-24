@@ -16,23 +16,26 @@ import Customer from "./pages/Customer";
 function App() {
   return (
     <BrowserRouter>
-      <Header>
-        {/* As now we have header surrounding different components we dont have to p
-    put in each and every component */}
+      <div className="font-sans">
+        {/* Added this wrapper div with font-sans class */}
+        <Header>
+          {/* As now we have header surrounding different components we dont have to p
+          ut in each and every component */}
 
-        {/* Defining routes */}
-        <Routes>
-          <Route path="/employees" element={<Employees />} />
-          <Route path="/dictionary" element={<Dictionary />} />
-          {/* parameterized route */}
-          <Route path="/dictionary/:search" element={<Definition />} />
-          <Route path="/customers" element={<Customers />} />
-          <Route path="/customers/:id" element={<Customer />} />
-          <Route path="/404" element={<NotFound />} />
-          <Route path="*" element={<NotFound show="visually-hidden" />} />
-        </Routes>
-        {/* <Employees /> */}
-      </Header>
+          {/* Defining routes */}
+          <Routes>
+            <Route path="/employees" element={<Employees />} />
+            <Route path="/dictionary" element={<Dictionary />} />
+            {/* parameterized route */}
+            <Route path="/dictionary/:search" element={<Definition />} />
+            <Route path="/customers" element={<Customers />} />
+            <Route path="/customers/:id" element={<Customer />} />
+            <Route path="/404" element={<NotFound />} />
+            <Route path="*" element={<NotFound show="visually-hidden" />} />
+          </Routes>
+          {/* <Employees /> */}
+        </Header>
+      </div>
     </BrowserRouter>
   );
 }

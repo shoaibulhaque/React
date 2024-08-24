@@ -27,26 +27,58 @@ export default function Customer() {
       });
   }, []); // Leaving dependency array empty which will make hit execute this function once
 
+  function deleteCustomer() {
+    console.log("deleting");
+  }
+
   return (
     <div className="m-4 text-center flex flex-col justify-center items-center">
       <div>
         {notFound ? <NotFound id={id} /> : null}
         {customer ? (
-          <div>
-            <p>
-              <b>ID:</b> {customer.id}
-            </p>
-            <p>
-              <b>Name:</b> {customer.name}
-            </p>
-            <p>
-              <b>Industry:</b> {customer.industry}
-            </p>
-          </div>
+          <table class="mb-3 w-full border-collapse border-1 border-gray-400 shadow-sm">
+            <tbody>
+              <tr>
+                <td class="border-1 border-gray-400 px-4 py-2">ID</td>
+                <td class="border-1 border-gray-400 px-4 py-2">
+                  {customer.id}
+                </td>
+              </tr>
+              <tr>
+                <td class="border-1 border-gray-400 px-4 py-2">Name</td>
+                <td class="border-1 border-gray-400 px-4 py-2">
+                  {customer.name}
+                </td>
+              </tr>
+              <tr>
+                <td class="border-1 border-gray-400 px-4 py-2">Industry</td>
+                <td class="border-1 border-gray-400 px-4 py-2">
+                  {customer.industry}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         ) : null}
       </div>
-      <div>
-        <Link to="/customers">Go Back</Link>
+
+      <div className="flex gap-2">
+        <div>
+          <button
+            className="bg-gray-800 hover:bg-gray-700 text-white font-bold py-[0.45rem] px-4 rounded"
+            onClick={deleteCustomer}
+          >
+            Delete
+          </button>
+        </div>
+
+        <div className="py-[0.45rem] px-3">
+          <Link
+            className="no-underline text-gray-600 font-bold"
+            to="/customers"
+          >
+            Go Back
+          </Link>
+        </div>
       </div>
     </div>
   );
