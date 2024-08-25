@@ -39,7 +39,6 @@ export default function Customers() {
       })
       .then((data) => {
         // assume the add was successful
-        // hide the modal
         // make sure the list is updated
         setCustomers([...customers, data.customer]);
       })
@@ -63,7 +62,7 @@ export default function Customers() {
                 >
                   <Link
                     to={"/customers/" + customer.id}
-                    className="text-lg font-semibold text-gray-500 hover:text-gray-900"
+                    className="no-underline text-lg font-semibold text-gray-500 hover:text-gray-900"
                   >
                     {customer.name}
                   </Link>
