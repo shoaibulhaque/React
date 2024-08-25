@@ -27,7 +27,7 @@ export default function Customer() {
           customer.industry !== tempCustomer.industry
       );
     }
-  }, [customer, tempCustomer]);
+  }, [tempCustomer]);
 
   /**
    * Fetches customer data from the API.
