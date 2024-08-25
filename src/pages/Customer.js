@@ -4,103 +4,183 @@ import NotFound from "../components/NotFound";
 import { baseURL } from "../shared";
 
 /**
- * Component that displays detailed information about a customer.
- * If the customer is not found, it renders a "NotFound" component.
+ * Customer component for displaying and managing customer details.
+ * @returns {JSX.Element} The rendered Customer component.
  */
 export default function Customer() {
-  const [customer, setCustomer] = useState(null); // State to hold the customer data
-  const [notFound, setNotFound] = useState(false); // State to track if customer is not found
+  const [customer, setCustomer] = useState(null);
+  const [tempCustomer, setTempCustomer] = useState(null);
+  const [notFound, setNotFound] = useState(false);
+  const [changed, setChanged] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const { id } = useParams(); // Get the customer ID from the URL parameters
+  const { id } = useParams();
+
+  useEffect(() => {
+    fetchCustomer();
+  }, [id]);
+
+  useEffect(() => {
+    if (customer && tempCustomer) {
+      setChanged(
+        customer.name !== tempCustomer.name ||
+          customer.industry !== tempCustomer.industry
+      );
+    }
+  }, [customer, tempCustomer]);
 
   /**
-   * useEffect hook to fetch customer data from the API when the component mounts.
-   * It checks if the customer exists and sets the appropriate state.
+   * Fetches customer data from the API.
    */
-  useEffect(() => {
-    const url = `${baseURL}api/customers/${id}`; // Construct the API URL
+  const fetchCustomer = async () => {
+    try {
+      const response = await fetch(`${baseURL}api/customers/${id}`);
+      if (response.status === 404) {
+        setNotFound(true);
+        return;
+      }
+      const data = await response.json();
+      setCustomer(data.customer);
+      setTempCustomer(data.customer);
+    } catch (error) {
+      console.error("Error fetching customer data:", error);
+      setError("Failed to fetch customer data");
+    }
+  };
 
-    fetch(url)
-      .then((response) => {
-        if (response.status === 404) {
-          setNotFound(true); // Set notFound state to true if customer is not found
-        }
-        return response.json(); // Parse the JSON response
-      })
-      .then((data) => {
-        setCustomer(data.customer); // Set the customer state with fetched data
-      })
-      .catch((error) => {
-        console.error("Error fetching customer data:", error);
+  /**
+   * Updates the customer data in the API.
+   */
+  const updateCustomer = async () => {
+    try {
+      const response = await fetch(`${baseURL}api/customers/${id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(tempCustomer),
       });
-  }, [id]); // Dependency array includes `id` to re-run effect when `id` changes
+      if (!response.ok) {
+        throw new Error("Something went wrong during update!");
+      }
+      const data = await response.json();
+      setCustomer(data.customer);
+      setChanged(false);
+      setError(null);
+    } catch (error) {
+      console.error("Error updating customer:", error);
+      setError(error.message);
+    }
+  };
+
+  /**
+   * Deletes the customer from the API.
+   */
+  const deleteCustomer = async () => {
+    try {
+      const response = await fetch(`${baseURL}api/customers/${id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!response.ok) {
+        throw new Error("Something went wrong during deletion!");
+      }
+      navigate("/customers");
+    } catch (error) {
+      console.error("Error deleting customer:", error);
+      setError("Failed to delete customer");
+    }
+  };
+
+  /**
+   * Handles input change for customer fields.
+   * @param {Object} e - The event object.
+   * @param {string} field - The field being updated.
+   */
+  const handleInputChange = (e, field) => {
+    setTempCustomer({ ...tempCustomer, [field]: e.target.value });
+  };
+
+  if (notFound) return <NotFound id={id} />;
 
   return (
     <div className="m-4 text-center flex flex-col justify-center items-center">
-      {/* Render NotFound component if customer is not found */}
-      {notFound ? <NotFound id={id} /> : null}
-
-      {/* Render customer details if customer data is available */}
       {customer && (
-        <table className="mb-3 w-full border-collapse border-1 border-gray-600 shadow-sm">
-          <tbody>
-            <tr>
-              <td className="border-1 border-gray-400 px-4 py-2">ID</td>
-              <td className="border-1 border-gray-400 px-4 py-2">
-                {customer.id}
-              </td>
-            </tr>
-            <tr>
-              <td className="border-1 border-gray-400 px-4 py-2">Name</td>
-              <td className="border-1 border-gray-400 px-4 py-2">
-                {customer.name}
-              </td>
-            </tr>
-            <tr>
-              <td className="border-1 border-gray-400 px-4 py-2">Industry</td>
-              <td className="border-1 border-gray-400 px-4 py-2">
-                {customer.industry}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="max-w-md mx-auto p-4">
+          <CustomerField
+            label="Name"
+            value={tempCustomer.name}
+            onChange={(e) => handleInputChange(e, "name")}
+          />
+          <CustomerField
+            label="Industry"
+            value={tempCustomer.industry}
+            onChange={(e) => handleInputChange(e, "industry")}
+          />
+        </div>
       )}
 
-      {/* Buttons for deleting the customer and navigating back */}
-      <div className="flex gap-2">
-        <button
-          className="bg-gray-800 hover:bg-gray-700 text-white font-bold py-[0.45rem] px-4 rounded"
-          onClick={() => {
-            const url = `${baseURL}/api/customers/${id}`;
-            fetch(url, {
-              method: "DELETE",
-              headers: {
-                "Content-Type": "application/json",
-              },
-            })
-              .then((response) => {
-                if (!response.ok) {
-                  throw new Error("Something went wrong during deletion!");
-                }
-                navigate("/customers"); // Redirect to customers list after deletion
-              })
-              .catch((error) => {
-                console.error("Error deleting customer:", error);
-              });
-          }}
-        >
-          Delete
-        </button>
+      <div className="flex gap-2 flex-col">
+        {changed && (
+          <div>
+            <button
+              onClick={updateCustomer}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
+            >
+              Save
+            </button>
+            <button
+              onClick={() => {
+                setTempCustomer({ ...customer });
+                setChanged(false);
+              }}
+              className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+            >
+              Cancel
+            </button>
+          </div>
+        )}
 
-        <div className="py-[0.45rem] px-3">
-          <Link
-            className="no-underline text-gray-600 font-bold"
-            to="/customers"
+        {customer && (
+          <button
+            className="bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+            onClick={deleteCustomer}
           >
-            Go Back
-          </Link>
-        </div>
+            Delete
+          </button>
+        )}
+
+        {error && <p className="text-red-500">{error}</p>}
+
+        <Link
+          className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded no-underline"
+          to="/customers"
+        >
+          Go Back
+        </Link>
       </div>
+    </div>
+  );
+}
+
+/**
+ * CustomerField component for rendering input fields.
+ * @param {Object} props - The component props.
+ * @param {string} props.label - The label for the input field.
+ * @param {string} props.value - The value of the input field.
+ * @param {Function} props.onChange - The onChange handler for the input field.
+ * @returns {JSX.Element} The rendered CustomerField component.
+ */
+function CustomerField({ label, value, onChange }) {
+  return (
+    <div className="flex flex-col sm:flex-row sm:items-center mb-4">
+      <label className="w-full sm:w-24 font-semibold mb-1 sm:mb-0">
+        {label}:
+      </label>
+      <input
+        type="text"
+        value={value}
+        onChange={onChange}
+        className="w-full sm:flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
     </div>
   );
 }
