@@ -1,13 +1,14 @@
-import { useParams, Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
 import NotFound from "../components/NotFound";
 import { baseURL } from "../shared";
-
+import { loginContext } from "../App";
 /**
  * Customer component for displaying and managing customer details.
  * @returns {JSX.Element} The rendered Customer component.
  */
 export default function Customer() {
+  const [loggedIn, setLoggedIn] = useContext(loginContext);
   const [customer, setCustomer] = useState(null);
   const [tempCustomer, setTempCustomer] = useState(null);
   const [notFound, setNotFound] = useState(false);
@@ -15,6 +16,7 @@ export default function Customer() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { id } = useParams();
+  const location = useLocation();
 
   useEffect(() => {
     fetchCustomer();
@@ -34,12 +36,23 @@ export default function Customer() {
    */
   const fetchCustomer = async () => {
     try {
-      const response = await fetch(`${baseURL}api/customers/${id}`);
+      const response = await fetch(`${baseURL}api/customers/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("access"),
+        },
+      });
       if (response.status === 404) {
         setNotFound(true);
         return;
       } else if (response.status === 401) {
-        navigate("/login");
+        setLoggedIn(false);
+        navigate("/login", {
+          state: {
+            previousUrl: location.pathname, // current location would be send as state to
+            // login page
+          },
+        });
       }
 
       const data = await response.json();
@@ -58,9 +71,21 @@ export default function Customer() {
     try {
       const response = await fetch(`${baseURL}api/customers/${id}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("access"),
+        },
         body: JSON.stringify(tempCustomer),
       });
+      if (response.status === 401) {
+        setLoggedIn(false);
+        navigate("/login", {
+          state: {
+            previousUrl: location.pathname, // current location would be send as state to
+            // login page
+          },
+        });
+      }
       if (!response.ok) {
         throw new Error("Something went wrong during update!");
       }
@@ -81,8 +106,20 @@ export default function Customer() {
     try {
       const response = await fetch(`${baseURL}api/customers/${id}`, {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("access"),
+        },
       });
+      if (response.status === 401) {
+        setLoggedIn(false);
+        navigate("/login", {
+          state: {
+            previousUrl: location.pathname, // current location would be send as state to
+            // login page
+          },
+        });
+      }
       if (!response.ok) {
         throw new Error("Something went wrong during deletion!");
       }

@@ -1,17 +1,31 @@
-import { useEffect, useState } from "react";
-import { json, Link, useNavigate } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
+import { json, Link, useNavigate, useLocation } from "react-router-dom";
 import { baseURL } from "../shared";
 import { AddCustomer } from "../components/AddCustomer";
+import { loginContext } from "../App";
 
 export default function Customers() {
+  const [loggedIn, setLoggedIn] = useContext(loginContext);
   const [customers, setCustomers] = useState();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    fetch(baseURL + "api/customers/") // consuming data from the backend
+    fetch(baseURL + "api/customers/", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("access"),
+      },
+    }) // consuming data from the backend
       .then((response) => {
         if (response.status === 401) {
-          navigate("/login");
+          setLoggedIn(false);
+          navigate("/login", {
+            state: {
+              previousUrl: location.pathname, // current location would be send as state to
+              // login page
+            },
+          });
         }
 
         return response.json();
@@ -32,6 +46,7 @@ export default function Customers() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("access"),
       },
       body: JSON.stringify(data),
     })

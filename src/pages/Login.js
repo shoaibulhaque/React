@@ -1,10 +1,42 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { baseURL } from "../shared";
+import { useNavigate, useLocation } from "react-router-dom";
+import { loginContext } from "../App";
 
 export default function Login() {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const [loggedIn, setLoggedIn] = useContext(loginContext);
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  function login() {}
+  function login() {
+    const url = baseURL + "api/token/";
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: username,
+        password: password,
+      }),
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        localStorage.setItem("access", data.access);
+        localStorage.setItem("refresh", data.refresh);
+        setLoggedIn(true);
+        navigate(
+          location?.state?.previousUrl
+            ? location.state.previousUrl
+            : "/customers"
+        ); // using the state object that was sent from customers page
+        // to get the url of customers page and navigate back to it
+      });
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center pt-20">
@@ -13,6 +45,7 @@ export default function Login() {
         id="customer"
         onSubmit={(e) => {
           e.preventDefault();
+          login();
         }}
       >
         <div className="flex justify-center mb-8">
