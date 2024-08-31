@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
-import { json, Link } from "react-router-dom";
+import { json, Link, useNavigate } from "react-router-dom";
 import { baseURL } from "../shared";
 import { AddCustomer } from "../components/AddCustomer";
 
 export default function Customers() {
   const [customers, setCustomers] = useState();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("Fetching...");
     fetch(baseURL + "api/customers/") // consuming data from the backend
       .then((response) => {
+        if (response.status === 401) {
+          navigate("/login");
+        }
+
         return response.json();
       })
       .then((data) => {

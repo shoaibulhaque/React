@@ -38,7 +38,10 @@ export default function Customer() {
       if (response.status === 404) {
         setNotFound(true);
         return;
+      } else if (response.status === 401) {
+        navigate("/login");
       }
+
       const data = await response.json();
       setCustomer(data.customer);
       setTempCustomer(data.customer);
