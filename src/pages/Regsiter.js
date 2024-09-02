@@ -1,23 +1,31 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { baseURL } from "../shared";
 import { useNavigate, useLocation } from "react-router-dom";
 import { loginContext } from "../App";
 
-export default function Login() {
+export default function Register() {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
   const [loggedIn, setLoggedIn] = useContext(loginContext);
+
   const location = useLocation();
   const navigate = useNavigate();
 
-  function login() {
-    const url = baseURL + "api/token/";
+  useEffect(() => {
+    localStorage.clear();
+    setLoggedIn(false);
+  }, []);
+
+  function register() {
+    const url = baseURL + "api/register/";
     fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        email: email,
         username: username,
         password: password,
       }),
@@ -45,7 +53,7 @@ export default function Login() {
         id="customer"
         onSubmit={(e) => {
           e.preventDefault();
-          login();
+          register();
         }}
       >
         <div className="flex justify-center mb-8">
@@ -68,6 +76,18 @@ export default function Login() {
             }}
           />
         </div>
+        <div className="mb-4">
+          <input
+            id="email"
+            type="email"
+            value={email}
+            placeholder="email"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
+          />
+        </div>
         <div className="mb-6">
           <input
             id="password"
@@ -85,15 +105,15 @@ export default function Login() {
             type="submit"
             className="w-full bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
           >
-            Log In
+            Register
           </button>
           <p className="flex flex-col items-center sm:flex-row mt-2 text-sm text-gray-600 dark:text-neutral-400">
-            Don't have an account yet?
+            Have an account?
             <a
               className="px-2 no-underline sm: text-blue-600 decoration-2 hover:underline focus:outline-none focus:underline font-medium dark:text-blue-500"
-              href="/register"
+              href="/login"
             >
-              Sign up here
+              Sign in here
             </a>
           </p>
         </div>
