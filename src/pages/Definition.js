@@ -2,14 +2,19 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import NotFound from "../components/NotFound";
+import useFetch from "../hooks/useFetch";
 
 export default function Definition() {
-  const [word, setWord] = useState(undefined);
-  const [notFound, setNotFound] = useState(false);
-  const [error, setError] = useState(false);
+  // const [word, setWord] = useState(undefined);
   let { search } = useParams();
   const show = "true";
   const navigate = useNavigate();
+
+  // Using custom hook
+  const [word, errorStatus] = useFetch(
+    "https://api.dictionaryapi.dev/api/v2/entries/en/" + search
+  );
+
   // const [word1, setWord1] = useState("");
   // const [word2, setWord2] = useState("");
 
@@ -36,48 +41,55 @@ export default function Definition() {
 
   // useEffectCleanup - return a function
 
-  useEffect(() => {
-    fetch("https://api.dictionaryapi.dev/api/v2/entries/en/" + search)
-      .then((response) => {
-        if (response.status === 404) {
-          setNotFound(true);
-        }
+  // -------- Used Custom Hook for the following ----------
+  // useEffect(() => {
+  //   fetch("https://api.dictionaryapi.dev/api/v2/entries/en/" + search)
+  //     .then((response) => {
+  //       if (response.status === 404) {
+  //         setNotFound(true);
+  //       }
 
-        if (!response.ok) {
-          setError(true);
+  //       if (!response.ok) {
+  //         setError(true);
 
-          throw new Error("Something went wrong !");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setWord(data[0].meanings);
-        console.log(data[0].meanings);
-      })
-      .catch((e) => {
-        console.log(e.message);
-      });
-  }, []);
+  //         throw new Error("Something went wrong !");
+  //       }
+  //       return response.json();
+  //     })
+  //     .then((data) => {
+  //       setWord(data[0].meanings);
+  //       console.log(data[0].meanings);
+  //     })
+  //     .catch((e) => {
+  //       console.log(e.message);
+  //     });
+  // }, []);
 
   // Handling 404 error
-  if (notFound === true) {
+  if (errorStatus === 404) {
     return (
       <>
-        <NotFound linkTo="/dictionary" linkText="Search Another" show={show} />
+        <NotFound
+          linkTo="/dictionary"
+          linkText="Search Another"
+          wordNotFound={true}
+          show={show}
+        />
       </>
     );
   }
   return (
     <>
-      {word ? (
+      {word?.[0] ? (
         <>
-          <h1>Here is the definition</h1>
-          {word.map((meaning) => (
+          <h1 className="mt-4">Here is the definition</h1>
+          {word[0].meanings.map((meaning) => (
             <p key={uuidv4()}>
               <b>{meaning.partOfSpeech}</b>:
               {" " + meaning.definitions[0].definition}
             </p>
           ))}
+          <a href="/dictionary">Go Back and Search another word</a>
         </>
       ) : (
         <p>Loading definition...</p>

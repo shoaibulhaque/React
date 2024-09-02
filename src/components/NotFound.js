@@ -14,7 +14,10 @@ export default function NotFound(Props) {
               Sorry, customer with ID {Props.id} does not exist.
             </p>
           ) : (
-            <p className="text-gray-600 ">Sorry, we couldn't find your page.</p>
+            <p className="text-gray-600 ">
+              Sorry, we couldn't find
+              {Props.wordNotFound ? " the definition" : " the page"}.
+            </p>
           )}
           <div className="mt-5 flex flex-col justify-center items-center gap-2 sm:flex-row sm:gap-3">
             <Link
