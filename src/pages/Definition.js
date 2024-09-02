@@ -11,9 +11,15 @@ export default function Definition() {
   const navigate = useNavigate();
 
   // Using custom hook
-  const [word, errorStatus] = useFetch(
-    "https://api.dictionaryapi.dev/api/v2/entries/en/" + search
-  );
+  const {
+    request,
+    data: [{ meanings: word }] = [{}],
+    errorStatus,
+  } = useFetch("https://api.dictionaryapi.dev/api/v2/entries/en/" + search);
+
+  useEffect(() => {
+    request();
+  }, []);
 
   // const [word1, setWord1] = useState("");
   // const [word2, setWord2] = useState("");
@@ -80,10 +86,10 @@ export default function Definition() {
   }
   return (
     <>
-      {word?.[0] ? (
+      {word ? (
         <>
           <h1 className="mt-4">Here is the definition</h1>
-          {word[0].meanings.map((meaning) => (
+          {word.map((meaning) => (
             <p key={uuidv4()}>
               <b>{meaning.partOfSpeech}</b>:
               {" " + meaning.definitions[0].definition}
